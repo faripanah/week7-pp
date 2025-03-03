@@ -1,10 +1,47 @@
+import { useState, useEffect } from "react";
+
 const AddJobPage = () => {
+  const [title, setTitle] = useState('')
+  const [description, setDescription] =useState('')
+  const [type, setType] = useState('')
+  const [name, setName] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactPhone, setContactPhone] = useState('')
   
   const submitForm = (e) => {
     e.preventDefault();
+    
+    // if (!title || !description || !type || !name || !contactEmail || !contactPhone) {
+    //   console.log("All fields are required!");
+    //   return;
+    //}
+
+    fetchData()
     console.log("submitForm called");
    
   };
+  const fetchData = async () => {
+    
+    const response = await fetch('/api/jobs', {
+      method: 'POST',
+      body: JSON.stringify({title, description, type, company: {name, contactEmail, contactPhone}}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    const json = await response.json();
+    console.log(json);
+    if (!response.ok) {
+      console.log('error adding a job')
+    }
+    if (response.ok) {
+      console.log('job added successfully')
+    }
+
+  }
+  
+  
 
   return (
     <div className="create">
@@ -12,12 +49,14 @@ const AddJobPage = () => {
       <form onSubmit={submitForm}>
         <label>Job title:</label>
         <input
+          onChange={(e) => {setTitle(e.target.value)}}
           type="text"
           required
-          value=""
+          value={title}
         />
         <label>Job type:</label>
-        <select >
+        <select onChange={(e) => {setType(e.target.value)}} required={true}>
+        <option value="">Select job type</option>
           <option value="Full-Time">Full-Time</option>
           <option value="Part-Time">Part-Time</option>
           <option value="Remote">Remote</option>
@@ -26,27 +65,31 @@ const AddJobPage = () => {
 
         <label>Job Description:</label>
         <textarea
+          onChange={(e) => {setDescription(e.target.value)}}
           required
-          value=""
+          value={description}
 
         ></textarea>
         <label>Company Name:</label>
         <input
+          onChange={(e) => {setName(e.target.value)}}
           type="text"
           required
-          value=""
+          value={name}
         />
         <label>Contact Email:</label>
         <input
-          type="text"
+          onChange={(e) => {setContactEmail(e.target.value)}}
+          type="email"
           required
-          value=""
+          value={contactEmail}
         />
         <label>Contact Phone:</label>
         <input
-          type="text"
+           onChange={(e) => {setContactPhone(e.target.value)}}
+          type="tel"
           required
-          value=""
+          value={contactPhone}
         />
         <button>Add Job</button>
       </form>
